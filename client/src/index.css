@@ -14,3 +14,146 @@ body {
   margin: 0 auto;
   padding: 24px 16px;
 }
+
+h1 {
+  font-size: 22px;
+  margin: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.muted {
+  color: #8b95a1;
+  font-size: 13px;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  background: #1c2530;
+  color: #e6e9ed;
+  border: 1px solid #2c3846;
+  border-radius: 6px;
+  padding: 6px 12px;
+}
+
+button:hover {
+  background: #263241;
+}
+
+/* loading, error and empty messages */
+.message-box {
+  background: #161d26;
+  border: 1px solid #2c3846;
+  border-radius: 8px;
+  padding: 32px 16px;
+  text-align: center;
+}
+
+.message-box p {
+  margin: 0 0 8px;
+}
+
+.message-box.error {
+  border-color: #7a2e2e;
+}
+
+/* add symbol form */
+.add-form {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.add-form input {
+  width: 100%;
+  font: inherit;
+  padding: 10px 12px;
+  background: #161d26;
+  color: #e6e9ed;
+  border: 1px solid #2c3846;
+  border-radius: 8px;
+}
+
+.add-form input:focus {
+  outline: none;
+  border-color: #4c8dff;
+}
+
+.suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 4px;
+  background: #1c2530;
+  border: 1px solid #2c3846;
+  border-radius: 8px;
+}
+
+.suggestions button {
+  width: 100%;
+  display: flex;
+  gap: 12px;
+  text-align: left;
+  border: none;
+  background: none;
+}
+
+.suggestions button:hover {
+  background: #263241;
+}
+
+.suggestion-symbol {
+  font-weight: 600;
+  min-width: 110px;
+}
+
+.suggestion-name {
+  color: #8b95a1;
+}
+
+.no-match {
+  padding: 6px 12px;
+  color: #8b95a1;
+}
+
+/* watchlist table */
+.watchlist {
+  width: 100%;
+  border-collapse: collapse;
+  background: #161d26;
+  border: 1px solid #2c3846;
+  border-radius: 8px;
+}
+
+.watchlist th,
+.watchlist td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #222c38;
+}
+
+.watchlist th {
+  font-size: 12px;
+  font-weight: 500;
+  color: #8b95a1;
+  text-transform: uppercase;
+}
+
+.watchlist .number {
+  text-align: right;
+  /* same width digits so numbers don't jump around */
+  font-variant-numeric: tabular-nums;
+}
+
+.symbol {
+  font-weight: 600;
+}
