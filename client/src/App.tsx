@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import AddSymbolForm from './components/AddSymbolForm'
 import Watchlist from './components/Watchlist'
 import { API_URL } from './config'
+import { useMarketSocket } from './hooks/useMarketSocket'
 import { useWatchlist } from './hooks/useWatchlist'
 import type { LoadState, SymbolInfo } from './types'
 
@@ -12,6 +13,7 @@ function App() {
   const [attempt, setAttempt] = useState(0)
 
   const { watchlist, addSymbol, removeSymbol } = useWatchlist()
+  const { prices } = useMarketSocket(watchlist)
 
   // get the list of available symbols once when the page opens
   useEffect(() => {
@@ -75,7 +77,7 @@ function App() {
             watchlist={watchlist}
             onAdd={addSymbol}
           />
-          <Watchlist items={items} onRemove={removeSymbol} />
+          <Watchlist items={items} prices={prices} onRemove={removeSymbol} />
         </>
       )}
     </div>

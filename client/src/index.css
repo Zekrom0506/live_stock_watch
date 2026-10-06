@@ -157,3 +157,23 @@ button:hover {
 .symbol {
   font-weight: 600;
 }
+
+.up {
+  color: #2ebd85;
+}
+
+.down {
+  color: #f6465d;
+}
+
+.remove-button {
+  border: none;
+  background: none;
+  color: #8b95a1;
+  padding: 4px 8px;
+}
+
+.remove-button:hover {
+  color: #f6465d;
+  background: none;
+}

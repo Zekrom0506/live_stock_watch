@@ -1,12 +1,13 @@
-import type { SymbolInfo } from '../types'
-import { formatPrice } from '../utils/format'
+import type { PriceMap, SymbolInfo } from '../types'
+import WatchlistRow from './WatchlistRow'
 
 interface Props {
   items: SymbolInfo[]
+  prices: PriceMap
   onRemove: (symbol: string) => void
 }
 
-function Watchlist({ items, onRemove }: Props) {
+function Watchlist({ items, prices, onRemove }: Props) {
   if (items.length === 0) {
     return (
       <div className="message-box">
@@ -21,22 +22,20 @@ function Watchlist({ items, onRemove }: Props) {
       <thead>
         <tr>
           <th>Symbol</th>
-          <th className="number">Prev close</th>
+          <th className="number">Price</th>
+          <th className="number">Change</th>
+          <th className="number">% Change</th>
           <th></th>
         </tr>
       </thead>
       <tbody>
         {items.map((item) => (
-          <tr key={item.symbol}>
-            <td>
-              <div className="symbol">{item.symbol}</div>
-              <div className="muted">{item.name}</div>
-            </td>
-            <td className="number">{formatPrice(item.prevClose)}</td>
-            <td className="number">
-              <button onClick={() => onRemove(item.symbol)}>Remove</button>
-            </td>
-          </tr>
+          <WatchlistRow
+            key={item.symbol}
+            info={item}
+            price={prices[item.symbol]}
+            onRemove={onRemove}
+          />
         ))}
       </tbody>
     </table>
