@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { WS_URL } from '../config'
 import type { PriceMap, Tick } from '../types'
+import { applyTicks } from '../utils/ticks'
+
+// how often buffered ticks are applied to state (in ms)
+const FLUSH_INTERVAL_MS = 100
 
 // Opens the websocket and keeps the latest price of every watchlist symbol.
 export function useMarketSocket(symbols: string[]) {
@@ -9,6 +13,8 @@ export function useMarketSocket(symbols: string[]) {
   const socketRef = useRef<WebSocket | null>(null)
   // symbols the server is currently sending us
   const subscribedRef = useRef<string[]>([])
+  // ticks that arrived since the last flush
+  const bufferRef = useRef<Tick[]>([])
 
   // open the connection once
   useEffect(() => {
@@ -18,16 +24,28 @@ export function useMarketSocket(symbols: string[]) {
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data)
       if (message.type === 'tick') {
-        const tick: Tick = message.tick
-        setPrices((oldPrices) => {
-          return { ...oldPrices, [tick.symbol]: tick.price }
-        })
+        // don't set state here, a render for every single tick is too many.
+        // just keep the tick and let the timer below apply them together
+        bufferRef.current.push(message.tick)
       }
     }
 
     return () => {
       socket.close()
     }
+  }, [])
+
+  // apply all buffered ticks in one state update, about 10 times a second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (bufferRef.current.length === 0) return
+
+      const ticks = bufferRef.current
+      bufferRef.current = []
+      setPrices((oldPrices) => applyTicks(oldPrices, ticks))
+    }, FLUSH_INTERVAL_MS)
+
+    return () => clearInterval(timer)
   }, [])
 
   // when the watchlist changes, subscribe to new symbols and unsubscribe removed ones

@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import type { SymbolInfo } from '../types'
 import { formatChange, formatPercent, formatPrice } from '../utils/format'
 
@@ -48,4 +49,6 @@ function WatchlistRow({ info, price, onRemove }: Props) {
   )
 }
 
-export default WatchlistRow
+// memo: a row only re-renders when its own props change,
+// so a tick for TCS does not re-render the INFY row
+export default memo(WatchlistRow)
