@@ -7,10 +7,12 @@ interface Props {
   price: number | undefined
   // true when the connection is down, so the price might be old
   stale: boolean
+  selected: boolean
+  onSelect: (symbol: string) => void
   onRemove: (symbol: string) => void
 }
 
-function WatchlistRow({ info, price, stale, onRemove }: Props) {
+function WatchlistRow({ info, price, stale, selected, onSelect, onRemove }: Props) {
   // 'flash-up' or 'flash-down' for a short time after the price changes
   const [flash, setFlash] = useState('')
   const previousPrice = useRef(price)
@@ -39,8 +41,19 @@ function WatchlistRow({ info, price, stale, onRemove }: Props) {
   if (change > 0) colorClass = 'up'
   if (change < 0) colorClass = 'down'
 
+  let rowClass = ''
+  if (stale) rowClass += ' stale'
+  if (selected) rowClass += ' selected'
+
+  // the remove button is inside the row, so stop the click
+  // from also selecting the row
+  function handleRemove(event: React.MouseEvent) {
+    event.stopPropagation()
+    onRemove(info.symbol)
+  }
+
   return (
-    <tr className={stale ? 'stale' : ''}>
+    <tr className={rowClass} onClick={() => onSelect(info.symbol)}>
       <td>
         <div className="symbol">{info.symbol}</div>
         <div className="muted">{info.name}</div>
@@ -57,7 +70,7 @@ function WatchlistRow({ info, price, stale, onRemove }: Props) {
       <td className="number">
         <button
           className="remove-button"
-          onClick={() => onRemove(info.symbol)}
+          onClick={handleRemove}
           aria-label={'Remove ' + info.symbol}
         >
           ✕

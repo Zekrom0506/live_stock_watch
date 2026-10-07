@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { WS_URL } from '../config'
-import type { ConnectionState, PriceMap, Tick } from '../types'
-import { applyTicks } from '../utils/ticks'
+import type { ConnectionState, HistoryMap, PriceMap, Tick } from '../types'
+import { addToHistory, applyTicks } from '../utils/ticks'
 
 // how often buffered ticks are applied to state (in ms)
 const FLUSH_INTERVAL_MS = 100
@@ -9,6 +9,8 @@ const FLUSH_INTERVAL_MS = 100
 const MAX_RETRY_DELAY_MS = 10000
 // after this many failed tries in a row we show "offline" instead of "reconnecting"
 const MAX_QUICK_RETRIES = 4
+// number of recent prices kept per symbol for the chart
+const HISTORY_LENGTH = 60
 
 // Tell the server which symbols we want. Only sends the difference
 // between what we want and what we are already subscribed to.
@@ -33,9 +35,11 @@ function updateSubscriptions(
   return wanted
 }
 
-// Opens the websocket and keeps the latest price of every watchlist symbol.
+// Opens the websocket and keeps the latest price and the recent
+// price history of every watchlist symbol.
 export function useMarketSocket(symbols: string[]) {
   const [prices, setPrices] = useState<PriceMap>({})
+  const [history, setHistory] = useState<HistoryMap>({})
   const [status, setStatus] = useState<ConnectionState>('connecting')
 
   const socketRef = useRef<WebSocket | null>(null)
@@ -109,6 +113,7 @@ export function useMarketSocket(symbols: string[]) {
       const ticks = bufferRef.current
       bufferRef.current = []
       setPrices((oldPrices) => applyTicks(oldPrices, ticks))
+      setHistory((oldHistory) => addToHistory(oldHistory, ticks, HISTORY_LENGTH))
     }, FLUSH_INTERVAL_MS)
 
     return () => clearInterval(timer)
@@ -124,5 +129,5 @@ export function useMarketSocket(symbols: string[]) {
     )
   }, [symbols])
 
-  return { prices, status }
+  return { prices, history, status }
 }

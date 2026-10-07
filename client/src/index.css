@@ -242,3 +242,34 @@ button:hover {
   background-color: rgba(246, 70, 93, 0.25);
   transition: none;
 }
+
+.watchlist tbody tr {
+  cursor: pointer;
+}
+
+.watchlist tbody tr:hover {
+  background: #1a222c;
+}
+
+.watchlist tbody tr.selected {
+  background: #1c2836;
+}
+
+/* price chart */
+.chart-box {
+  margin-top: 16px;
+  padding: 16px;
+  background: #161d26;
+  border: 1px solid #2c3846;
+  border-radius: 8px;
+}
+
+.chart-title {
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.chart-area {
+  position: relative;
+  height: 240px;
+}

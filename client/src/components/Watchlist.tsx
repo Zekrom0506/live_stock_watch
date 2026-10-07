@@ -6,6 +6,8 @@ interface Props {
   items: SymbolInfo[]
   prices: PriceMap
   stale: boolean
+  selectedSymbol: string | null
+  onSelect: (symbol: string) => void
   onRemove: (symbol: string) => void
 }
 
@@ -18,7 +20,14 @@ function getPercent(item: SymbolInfo, prices: PriceMap): number {
   return ((price - item.prevClose) / item.prevClose) * 100
 }
 
-function Watchlist({ items, prices, stale, onRemove }: Props) {
+function Watchlist({
+  items,
+  prices,
+  stale,
+  selectedSymbol,
+  onSelect,
+  onRemove,
+}: Props) {
   const [sortKey, setSortKey] = useState<SortKey>('none')
   const [ascending, setAscending] = useState(true)
 
@@ -93,6 +102,8 @@ function Watchlist({ items, prices, stale, onRemove }: Props) {
             info={item}
             price={prices[item.symbol]}
             stale={stale}
+            selected={item.symbol === selectedSymbol}
+            onSelect={onSelect}
             onRemove={onRemove}
           />
         ))}

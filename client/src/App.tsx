@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import ConnectionStatus from './components/ConnectionStatus'
 import AddSymbolForm from './components/AddSymbolForm'
+import PriceChart from './components/PriceChart'
 import Watchlist from './components/Watchlist'
 import { API_URL } from './config'
 import { useMarketSocket } from './hooks/useMarketSocket'
@@ -14,7 +15,10 @@ function App() {
   const [attempt, setAttempt] = useState(0)
 
   const { watchlist, addSymbol, removeSymbol } = useWatchlist()
-  const { prices, status } = useMarketSocket(watchlist)
+  const { prices, history, status } = useMarketSocket(watchlist)
+
+  // symbol whose chart is open (null means no chart)
+  const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null)
 
   // get the list of available symbols once when the page opens
   useEffect(() => {
@@ -50,6 +54,20 @@ function App() {
     setLoadState('loading')
     setAttempt(attempt + 1)
   }
+
+  // clicking the selected row again closes the chart
+  const handleSelect = useCallback((symbol: string) => {
+    setSelectedSymbol((current) => (current === symbol ? null : symbol))
+  }, [])
+
+  const handleRemove = useCallback(
+    (symbol: string) => {
+      removeSymbol(symbol)
+      // close the chart if its symbol was removed
+      setSelectedSymbol((current) => (current === symbol ? null : current))
+    },
+    [removeSymbol],
+  )
 
   // full details of the watchlist symbols, in the order they were added
   const items: SymbolInfo[] = []
@@ -92,8 +110,16 @@ function App() {
             items={items}
             prices={prices}
             stale={status !== 'live'}
-            onRemove={removeSymbol}
+            selectedSymbol={selectedSymbol}
+            onSelect={handleSelect}
+            onRemove={handleRemove}
           />
+          {selectedSymbol && (
+            <PriceChart
+              symbol={selectedSymbol}
+              points={history[selectedSymbol] || []}
+            />
+          )}
         </>
       )}
     </div>
