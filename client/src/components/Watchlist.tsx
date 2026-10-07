@@ -4,10 +4,11 @@ import WatchlistRow from './WatchlistRow'
 interface Props {
   items: SymbolInfo[]
   prices: PriceMap
+  stale: boolean
   onRemove: (symbol: string) => void
 }
 
-function Watchlist({ items, prices, onRemove }: Props) {
+function Watchlist({ items, prices, stale, onRemove }: Props) {
   if (items.length === 0) {
     return (
       <div className="message-box">
@@ -34,6 +35,7 @@ function Watchlist({ items, prices, onRemove }: Props) {
             key={item.symbol}
             info={item}
             price={prices[item.symbol]}
+            stale={stale}
             onRemove={onRemove}
           />
         ))}

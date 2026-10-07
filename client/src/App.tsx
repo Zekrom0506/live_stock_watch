@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import ConnectionStatus from './components/ConnectionStatus'
 import AddSymbolForm from './components/AddSymbolForm'
 import Watchlist from './components/Watchlist'
 import { API_URL } from './config'
@@ -13,7 +14,7 @@ function App() {
   const [attempt, setAttempt] = useState(0)
 
   const { watchlist, addSymbol, removeSymbol } = useWatchlist()
-  const { prices } = useMarketSocket(watchlist)
+  const { prices, status } = useMarketSocket(watchlist)
 
   // get the list of available symbols once when the page opens
   useEffect(() => {
@@ -56,7 +57,11 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>Live Watchlist</h1>
+        <div>
+          <h1>Live Watchlist</h1>
+          <span className="muted">Simulated market data</span>
+        </div>
+        <ConnectionStatus status={status} />
       </header>
 
       {loadState === 'loading' && (
@@ -77,7 +82,12 @@ function App() {
             watchlist={watchlist}
             onAdd={addSymbol}
           />
-          <Watchlist items={items} prices={prices} onRemove={removeSymbol} />
+          <Watchlist
+            items={items}
+            prices={prices}
+            stale={status !== 'live'}
+            onRemove={removeSymbol}
+          />
         </>
       )}
     </div>

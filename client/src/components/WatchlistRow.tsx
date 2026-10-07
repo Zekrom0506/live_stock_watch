@@ -5,10 +5,12 @@ import { formatChange, formatPercent, formatPrice } from '../utils/format'
 interface Props {
   info: SymbolInfo
   price: number | undefined
+  // true when the connection is down, so the price might be old
+  stale: boolean
   onRemove: (symbol: string) => void
 }
 
-function WatchlistRow({ info, price, onRemove }: Props) {
+function WatchlistRow({ info, price, stale, onRemove }: Props) {
   // price is undefined until the first tick arrives
   let change = 0
   let percent = 0
@@ -22,7 +24,7 @@ function WatchlistRow({ info, price, onRemove }: Props) {
   if (change < 0) colorClass = 'down'
 
   return (
-    <tr>
+    <tr className={stale ? 'stale' : ''}>
       <td>
         <div className="symbol">{info.symbol}</div>
         <div className="muted">{info.name}</div>

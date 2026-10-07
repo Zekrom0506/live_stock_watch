@@ -177,3 +177,39 @@ button:hover {
   color: #f6465d;
   background: none;
 }
+
+/* connection status badge */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  padding: 4px 10px;
+  border: 1px solid #2c3846;
+  border-radius: 999px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #8b95a1;
+}
+
+.status-live .status-dot {
+  background: #2ebd85;
+}
+
+.status-connecting .status-dot,
+.status-reconnecting .status-dot {
+  background: #f0b90b;
+}
+
+.status-offline .status-dot {
+  background: #f6465d;
+}
+
+/* grey out prices when the connection is down so old numbers don't look live */
+.watchlist tr.stale .number {
+  color: #5c6672;
+}
