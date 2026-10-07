@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import type { SymbolInfo } from '../types'
 import { formatChange, formatPercent, formatPrice } from '../utils/format'
 
@@ -11,6 +11,22 @@ interface Props {
 }
 
 function WatchlistRow({ info, price, stale, onRemove }: Props) {
+  // 'flash-up' or 'flash-down' for a short time after the price changes
+  const [flash, setFlash] = useState('')
+  const previousPrice = useRef(price)
+
+  useEffect(() => {
+    const previous = previousPrice.current
+    previousPrice.current = price
+    if (price === undefined || previous === undefined || price === previous) {
+      return
+    }
+
+    setFlash(price > previous ? 'flash-up' : 'flash-down')
+    const timer = setTimeout(() => setFlash(''), 400)
+    return () => clearTimeout(timer)
+  }, [price])
+
   // price is undefined until the first tick arrives
   let change = 0
   let percent = 0
@@ -29,7 +45,7 @@ function WatchlistRow({ info, price, stale, onRemove }: Props) {
         <div className="symbol">{info.symbol}</div>
         <div className="muted">{info.name}</div>
       </td>
-      <td className="number price">
+      <td className={'number price ' + flash}>
         {price === undefined ? '--' : formatPrice(price)}
       </td>
       <td className={'number ' + colorClass}>

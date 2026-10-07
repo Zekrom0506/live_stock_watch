@@ -51,8 +51,14 @@ function App() {
     setAttempt(attempt + 1)
   }
 
-  // full details of the symbols that are in the watchlist
-  const items = allSymbols.filter((item) => watchlist.includes(item.symbol))
+  // full details of the watchlist symbols, in the order they were added
+  const items: SymbolInfo[] = []
+  for (const symbol of watchlist) {
+    const info = allSymbols.find((item) => item.symbol === symbol)
+    if (info) {
+      items.push(info)
+    }
+  }
 
   return (
     <div className="app">

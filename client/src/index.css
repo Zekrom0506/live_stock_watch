@@ -213,3 +213,32 @@ button:hover {
 .watchlist tr.stale .number {
   color: #5c6672;
 }
+
+.sort-button {
+  border: none;
+  background: none;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+  text-transform: inherit;
+}
+
+.sort-button:hover {
+  background: none;
+  color: #e6e9ed;
+}
+
+/* short background flash when a price moves */
+.price {
+  transition: background-color 0.4s;
+}
+
+.price.flash-up {
+  background-color: rgba(46, 189, 133, 0.25);
+  transition: none;
+}
+
+.price.flash-down {
+  background-color: rgba(246, 70, 93, 0.25);
+  transition: none;
+}
