@@ -6,15 +6,20 @@ const symbols = require("./symbols");
 
 const PORT = process.env.PORT || 4000;
 // how often the server tries to move prices (in ms)
-const TICK_INTERVAL_MS = Number(process.env.TICK_INTERVAL_MS) || 250;
+const TICK_INTERVAL_MS = Number(process.env.TICK_INTERVAL_MS) || 500;
+// prices are not allowed to move more than 5% away from the starting price
+const MAX_MOVE = 0.05;
 
 const app = express();
 app.use(cors());
 
 // current price of every symbol, this changes on every tick
 const prices = {};
+// starting price of every symbol, this never changes
+const startPrices = {};
 for (const item of symbols) {
   prices[item.symbol] = item.price;
+  startPrices[item.symbol] = item.price;
 }
 
 // REST endpoint: list of all symbols that can be added to a watchlist
@@ -80,7 +85,15 @@ wss.on("connection", (socket) => {
 // move a price up or down by a small random amount (max 0.15%)
 function movePrice(symbol) {
   const change = (Math.random() - 0.5) * 0.003;
-  const newPrice = prices[symbol] * (1 + change);
+  let newPrice = prices[symbol] * (1 + change);
+
+  // without this limit the random moves add up and prices drift very far
+  // when the server is left running for a long time
+  const lowest = startPrices[symbol] * (1 - MAX_MOVE);
+  const highest = startPrices[symbol] * (1 + MAX_MOVE);
+  if (newPrice < lowest) newPrice = lowest;
+  if (newPrice > highest) newPrice = highest;
+
   prices[symbol] = Math.round(newPrice * 100) / 100;
 }
 
