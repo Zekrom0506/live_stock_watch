@@ -96,6 +96,9 @@ button:hover {
   background: #1c2530;
   border: 1px solid #2c3846;
   border-radius: 8px;
+  /* the full list is long, so let it scroll */
+  max-height: 260px;
+  overflow-y: auto;
 }
 
 .suggestions button {

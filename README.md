@@ -8,7 +8,7 @@ A stock watchlist where prices update in real time over a WebSocket. Built with 
 
 ## Features
 
-- Search and add symbols to a watchlist, remove them, and the list is saved in localStorage
+- Pick symbols from a dropdown or search to add them to a watchlist, remove them, and the list is saved in localStorage
 - Live price, change and % change for every symbol, with a green/red flash when the price moves
 - Sort by symbol, price or % change
 - Click a row to see a live line chart of its recent prices (Chart.js)

@@ -7,24 +7,22 @@ interface Props {
   onAdd: (symbol: string) => void
 }
 
-const MAX_SUGGESTIONS = 6
-
 function AddSymbolForm({ allSymbols, watchlist, onAdd }: Props) {
   const [query, setQuery] = useState('')
+  // the list is open while the input has focus
+  const [open, setOpen] = useState(false)
 
-  // suggestions = symbols that match the text and are not in the watchlist yet
+  // start with every symbol that is not in the watchlist yet,
+  // then narrow it down if something is typed
   const text = query.trim().toLowerCase()
-  let suggestions: SymbolInfo[] = []
+  let suggestions = allSymbols.filter((item) => !watchlist.includes(item.symbol))
   if (text !== '') {
-    suggestions = allSymbols
-      .filter((item) => !watchlist.includes(item.symbol))
-      .filter((item) => {
-        return (
-          item.symbol.toLowerCase().includes(text) ||
-          item.name.toLowerCase().includes(text)
-        )
-      })
-      .slice(0, MAX_SUGGESTIONS)
+    suggestions = suggestions.filter((item) => {
+      return (
+        item.symbol.toLowerCase().includes(text) ||
+        item.name.toLowerCase().includes(text)
+      )
+    })
   }
 
   function handleAdd(symbol: string) {
@@ -46,18 +44,28 @@ function AddSymbolForm({ allSymbols, watchlist, onAdd }: Props) {
         type="text"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
-        placeholder="Search symbol or company, e.g. TCS"
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+        placeholder="Search or pick a symbol, e.g. TCS"
         aria-label="Search symbol"
       />
 
-      {text !== '' && (
+      {open && (
         <ul className="suggestions">
           {suggestions.length === 0 && (
-            <li className="no-match">No matching symbols</li>
+            <li className="no-match">
+              {text === '' ? 'All symbols are already added' : 'No matching symbols'}
+            </li>
           )}
           {suggestions.map((item) => (
             <li key={item.symbol}>
-              <button type="button" onClick={() => handleAdd(item.symbol)}>
+              {/* preventDefault on mouse down keeps the focus in the input,
+                  otherwise the list closes before the click happens */}
+              <button
+                type="button"
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => handleAdd(item.symbol)}
+              >
                 <span className="suggestion-symbol">{item.symbol}</span>
                 <span className="suggestion-name">{item.name}</span>
               </button>
